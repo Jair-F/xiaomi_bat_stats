@@ -7,6 +7,7 @@
 #define SSID F("Battery")
 #define PASSWORD F("")
 #define LOCAL_DNS_NAME F("battery")
+#define SERIAL_BAUDRATE 115200
 
 // #define DEBUG
 #ifdef DEBUG

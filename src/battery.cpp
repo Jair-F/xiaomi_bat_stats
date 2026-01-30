@@ -7,7 +7,7 @@ struct BatteryState;
 
 BatteryMonitor::BatteryMonitor(SERIAL_TYPE &_serial, bool debugEnabled){
     batterySerial = &_serial;
-    batterySerial->begin(115200);
+    batterySerial->begin(SERIAL_BAUDRATE);
     batterySerial->setTimeout(2000);
     debug = debugEnabled;
 }
