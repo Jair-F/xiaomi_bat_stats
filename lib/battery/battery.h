@@ -1,18 +1,34 @@
+#pragma once
 #include <ESP8266WiFi.h>
-#include <SoftwareSerial.h>
+#include "config.h"
 
-#ifndef NINEBATTERY_MQTT_BATTERY_H
-#define NINEBATTERY_MQTT_BATTERY_H
+struct BatteryState {
+    int16_t status; // 0=Discharge, 1=Charge, 2=Idle
+    String serial;
+    int16_t remaining_capacity_perc;
+    int16_t remaining_capacity;
+    int16_t factory_capacity;
+    int16_t actual_capacity;
+    double current;
+    double voltage;
+    double power;
+    int8_t temp_zone0, temp_zone1;
+    int16_t cell_voltage_cell0, cell_voltage_cell1, cell_voltage_cell2, cell_voltage_cell3,
+            cell_voltage_cell4, cell_voltage_cell5, cell_voltage_cell6, cell_voltage_cell7,
+            cell_voltage_cell8, cell_voltage_cell9;
+    long uptime;
+    String error;
+};
 
-struct BatteryState;
 
-class battery {
+class BatteryMonitor {
 public:
     bool debug = false;
+    SERIAL_TYPE *batterySerial;
 
-    battery(int batteryTxPin, int batteryRxPin, bool debugEnabled);
+    BatteryMonitor(SERIAL_TYPE &_serial, bool debugEnabled);
 
-    DynamicJsonDocument readBattery();
+    // DynamicJsonDocument readBattery();
     bool readBatteryState(BatteryState &state);
 
     bool sendCommand(const byte cmd[], int cmdLen);
@@ -59,4 +75,3 @@ private:
     bool verifyCrc();
 };
 
-#endif //NINEBATTERY_MQTT_BATTERY_H

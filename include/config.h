@@ -1,11 +1,15 @@
-#define wifi_ssid "ssid"
-#define wifi_password "password"
-#define mqtt_server "192.168.1.1"
-#define mqtt_port 1883
+#pragma once
+#include <Arduino.h>
+#include <SoftwareSerial.h>
+#include <HardwareSerial.h>
 
-#define batteryTxPin D1
-#define batteryRxPin D2
+#define SSID F("Home")
+#define PASSWORD F("JaDaLiAdJa1209!?,")
+#define LOCAL_DNS_NAME F("battery")
 
-#define mqttTopic "wifi2mqtt/%s"
-#define mqttClientId "ninebattery-mqtt"
-#define mqttEnabled true
+#define DEBUG
+#ifdef DEBUG
+#define SERIAL_TYPE SoftwareSerial
+#else
+#define SERIAL_TYPE HardwareSerial
+#endif
