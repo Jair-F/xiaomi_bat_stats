@@ -31,14 +31,23 @@ void setup() {
     Serial.println(SSID);
     #endif
 
+    #ifdef CREATE_APN
+    WiFi.softAP(SSID, PASSWORD);
+    #ifdef DEBUG
+    Serial.print(F("created wifi network: "));
+    Serial.print(SSID);
+    Serial.print(F(" "));
+    Serial.println(PASSWORD);
+    #endif
+    #else
     WiFi.begin(SSID, PASSWORD);
-
     while (WiFi.status() != WL_CONNECTED) {
         delay(500);
         #ifdef DEBUG
         Serial.print(F("."));
         #endif
     }
+    #endif
 
     #ifdef DEBUG
     Serial.println(F("WiFi connected."));
@@ -66,10 +75,10 @@ void setup() {
         #endif
     }
     
-    
     initWithFakeData(batteryState);
 }
 
 void loop() {
     server.handleClient();
+    MDNS.update();
 }

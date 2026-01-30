@@ -3,8 +3,9 @@
 #include <SoftwareSerial.h>
 #include <HardwareSerial.h>
 
-#define SSID F("Home")
-#define PASSWORD F("JaDaLiAdJa1209!?,")
+#define CREATE_APN
+#define SSID F("Battery")
+#define PASSWORD F("")
 #define LOCAL_DNS_NAME F("battery")
 
 #define DEBUG
