@@ -17,9 +17,8 @@
 #endif
 
 
-
-SoftwareSerial serial(1, 2);
-BatteryMonitor batteryMonitor(serial, false);
+// SoftwareSerial serial(1, 2);
+BatteryMonitor batteryMonitor(Serial, false);
 BatteryState batteryState;
 
 

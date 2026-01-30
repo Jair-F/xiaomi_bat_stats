@@ -30,13 +30,11 @@ String getHealthColor(int perc) {
 }
 
 String getBatteryHTML(BatteryState &state) {
-    // 1. Prepare computed values
     String statusText = (state.status == 1) ? "Charging" : (state.status == 0 ? "Discharging" : "Idle");
     String uptimeStr = formatTime(state.uptime);
     String barColor = getHealthColor(state.remaining_capacity_perc);
     int soh = (state.factory_capacity > 0) ? (state.actual_capacity * 100 / state.factory_capacity) : 0;
 
-    // 2. The HTML Template
     String html = R"rawliteral(<!DOCTYPE html>
 <html>
 <head>
@@ -109,7 +107,6 @@ String getBatteryHTML(BatteryState &state) {
 </body>
 </html>)rawliteral";
 
-    // 3. String Replacements
     html.replace("{{PERC}}", String(state.remaining_capacity_perc));
     html.replace("{{COLOR}}", barColor);
     html.replace("{{STATUS}}", statusText);
@@ -137,71 +134,52 @@ String getBatteryHTML(BatteryState &state) {
     if (state.error.length() > 0 && state.error != "None") {
         html.replace("{{SHOW_ERR}}", "block");
         html.replace("{{ERR_MSG}}", state.error);
-    } else {
+    }
+    else {
         html.replace("{{SHOW_ERR}}", "none");
         html.replace("{{ERR_MSG}}", "");
     }
     return html;
 }
 
-// -------------------------------------------------------------------------
-// 5. HELPER: UPDATE DATA (Simulated for Demo)
-// -------------------------------------------------------------------------
 void initWithFakeData(BatteryState& batteryState) {
 
     batteryState.uptime = millis() / 1000;
     
-    // Simulate Battery Draining
-    static int perc = 100;
-    if (millis() % 5000 < 50) { // Every 5 seconds drop 1%
-        perc--;
-        if (perc < 0) perc = 100;
-    }
+    batteryState.remaining_capacity_perc = -1;
+    batteryState.status = -1;
+    batteryState.serial = "----------";
+    batteryState.factory_capacity = -1;
+    batteryState.actual_capacity = -1;
+    batteryState.remaining_capacity = -1;
+    batteryState.voltage = -1;
+    batteryState.current = -1;
+    batteryState.power = -1;
+    batteryState.temp_zone0 = -1;
+    batteryState.temp_zone1 = -1;
+    batteryState.error = F("Fake Error - Testing");
     
-    batteryState.remaining_capacity_perc = perc;
-    batteryState.status = 0; // Discharging
-    batteryState.serial = "SN-ESP-9000";
-    batteryState.factory_capacity = 3000;
-    batteryState.actual_capacity = 2950;
-    batteryState.remaining_capacity = (2950 * perc) / 100;
-    batteryState.voltage = 36.0 + (perc / 25.0);
-    batteryState.current = 1.5;
-    batteryState.power = batteryState.voltage * batteryState.current;
-    batteryState.temp_zone0 = 35;
-    batteryState.temp_zone1 = 37;
-    batteryState.error = (perc < 10) ? "Low Battery Warning!" : ""; // Show error if low
-    
-    // Fake cell voltages
-    batteryState.cell_voltage_cell0 = 3600;
-    batteryState.cell_voltage_cell1 = 3610;
-    batteryState.cell_voltage_cell2 = 3590;
-    batteryState.cell_voltage_cell3 = 3605;
-    batteryState.cell_voltage_cell4 = 3600;
-    batteryState.cell_voltage_cell5 = 3600;
-    batteryState.cell_voltage_cell6 = 3610;
-    batteryState.cell_voltage_cell7 = 3590;
-    batteryState.cell_voltage_cell8 = 3605;
-    batteryState.cell_voltage_cell9 = 3600;
+    batteryState.cell_voltage_cell0 = -1;
+    batteryState.cell_voltage_cell1 = -1;
+    batteryState.cell_voltage_cell2 = -1;
+    batteryState.cell_voltage_cell3 = -1;
+    batteryState.cell_voltage_cell4 = -1;
+    batteryState.cell_voltage_cell5 = -1;
+    batteryState.cell_voltage_cell6 = -1;
+    batteryState.cell_voltage_cell7 = -1;
+    batteryState.cell_voltage_cell8 = -1;
+    batteryState.cell_voltage_cell9 = -1;
 }
 
-// -------------------------------------------------------------------------
-// 6. SERVER ROUTE HANDLERS
-// -------------------------------------------------------------------------
 
-// Handler for root URL "/"
 void handleRoot() {
-    // 1. Refresh data right before showing page
     batteryMonitor.readBatteryState(batteryState);
 
-    // 2. Generate HTML
     String htmlPage = getBatteryHTML(batteryState);
     
-    // 3. Send Response
-    // 200 = OK, "text/html" = content type, htmlPage = the content
     server.send(200, "text/html", htmlPage);
 }
 
-// Handler for 404 Not Found
 void handleNotFound() {
     server.send(404, "text/plain", "404: Not Found");
 }

@@ -8,7 +8,7 @@
 #define PASSWORD F("")
 #define LOCAL_DNS_NAME F("battery")
 
-#define DEBUG
+// #define DEBUG
 #ifdef DEBUG
 #define SERIAL_TYPE SoftwareSerial
 #else

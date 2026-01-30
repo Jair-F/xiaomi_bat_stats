@@ -144,14 +144,14 @@ bool BatteryMonitor::receiving() {
 bool BatteryMonitor::readBatteryState(BatteryState &state) {
 
     if(!sendCommand(get_status, sizeof(get_status))) {
-        state.error = "status";
+        state.error = F("error reading status");
         return false;
     } else{
         state.status = convertBytesToInt(response[8], response[7]);
     }
 
     if(!sendCommand(get_serial, sizeof(get_serial))) {
-        state.error = "serial";
+        state.error = F("error reading serial");
         return false;
     } else {
         byte serial[15] = {};
@@ -160,42 +160,42 @@ bool BatteryMonitor::readBatteryState(BatteryState &state) {
     }
 
     if(!sendCommand(get_remaining_capacity_perc, sizeof(get_remaining_capacity_perc))) {
-        state.error = "get_remaining_capacity_perc";
+        state.error = F("error reading remaining_capacity_perc");
         return false;
     } else {
         state.remaining_capacity_perc = convertBytesToInt(response[8], response[7]);
     }
 
     if(!sendCommand(get_remaining_capacity, sizeof(get_remaining_capacity))) {
-        state.error = "get_remaining_capacity";
+        state.error = F("error reading remaining_capacity");
         return false;
     } else {
         state.remaining_capacity = convertBytesToInt(response[8], response[7]);
     }
 
     if(!sendCommand(get_factory_capacity, sizeof(get_factory_capacity))) {
-        state.error = "get_factory_capacity";
+        state.error = F("error reading factory_capacity");
         return false;
     } else {
         state.factory_capacity = convertBytesToInt(response[8], response[7]);
     }
 
     if(!sendCommand(get_actual_capacity, sizeof(get_actual_capacity))) {
-        state.error = "get_actual_capacity";
+        state.error = F("error reading actual_capacity");
         return false;
     } else {
         state.actual_capacity = convertBytesToInt(response[8], response[7]);
     }
 
     if(!sendCommand(get_current, sizeof(get_current))) {
-        state.error = "get_current";
+        state.error = F("error reading current");
         return false;
     } else {
         state.current = double(convertBytesToInt(response[8], response[7])) * 10 / 1000;
     }
 
     if(!sendCommand(get_voltage, sizeof(get_voltage))) {
-        state.error = "get_voltage";
+        state.error = F("error reading voltage");
         return false;
     } else {
         state.voltage = double(convertBytesToInt(response[8], response[7])) * 10 / 1000;
@@ -203,7 +203,7 @@ bool BatteryMonitor::readBatteryState(BatteryState &state) {
     state.power = double (state.current * state.voltage);
 
     if(!sendCommand(get_temperature, sizeof(get_temperature))) {
-        state.error = "get_temperature";
+        state.error = F("error reading temperature");
         return false;
     } else {
         state.temp_zone0 = response[7] - 20;
@@ -211,7 +211,7 @@ bool BatteryMonitor::readBatteryState(BatteryState &state) {
     }
 
     if(!sendCommand(get_cells_voltage, sizeof(get_cells_voltage))) {
-        state.error = "get_cells_voltage";
+        state.error = F("error reading cells_voltage");
         return false;
     } else {
         state.cell_voltage_cell0 = convertBytesToInt(response[8], response[7]);
