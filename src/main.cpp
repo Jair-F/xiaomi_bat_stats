@@ -63,7 +63,7 @@ void setup() {
     Serial.println(F("HTTP server started"));
     #endif
 
-    if (!MDNS.begin(F("battery"))) {
+    if (!MDNS.begin(LOCAL_DNS_NAME)) {
         #ifdef DEBUG
         Serial.println(F("Error setting up MDNS responder!"));
         #endif

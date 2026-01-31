@@ -1,4 +1,5 @@
 #include <SoftwareSerial.h>
+#include <HardwareSerial.h>
 #include "battery.h"
 #include "config.h"
 
@@ -23,7 +24,9 @@ bool BatteryMonitor::sendCommand(const byte *cmd, int cmdLen) {
             return true;
         }
         delay(500);
+        #ifdef DEBUG
         if(debug) Serial.printf("failed (%d/%d)...\n", att, maxAtt);
+        #endif
     }
 
     return false;
@@ -33,7 +36,9 @@ bool BatteryMonitor::receiving() {
     unsigned long started = millis();
     while(!batterySerial->available()) {
         if(millis() - started >= 500) {
+            #ifdef DEBUG
             if(debug) Serial.println("receive timeout");
+            #endif
 
             return false;
         }
@@ -54,15 +59,20 @@ bool BatteryMonitor::receiving() {
                     break;
                 }
 
+                #ifdef DEBUG
                 if(debug) Serial.println("invalid state at header 1");
                 if(debug) printBytes("bytes", response, 10);
+                #endif
 
                 //hack to fix not receiving last byte
                 return receiving();
             case STATE_HEADER2:
                 if (currentByte != 0xA5) {
+                    #ifdef DEBUG
                     if(debug) Serial.println("invalid state at header 2");
                     if (debug) printBytes("bytes", response, 10);
+                    #endif
+
                     save = false;
                     break;
                 }
@@ -104,7 +114,9 @@ bool BatteryMonitor::receiving() {
                 }
                 break;
             default:
+                #ifdef DEBUG
                 Serial.printf("unknown state %d\n", state);
+                #endif
                 panic();
         }
         if (!save) {
@@ -237,6 +249,7 @@ int16_t BatteryMonitor::convertBytesToInt(byte byte1, byte byte2) {
 }
 
 void BatteryMonitor::printBytes(const String &tag, const byte bytes[], int len) {
+    #ifdef DEBUG
     Serial.print(tag + ": ");
     for (int i = 0; i < len; i++) {
         Serial.print("0x");
@@ -247,6 +260,7 @@ void BatteryMonitor::printBytes(const String &tag, const byte bytes[], int len) 
         Serial.print(" ");
     }
     Serial.println("");
+    #endif
 }
 
 bool BatteryMonitor::verifyCrc() {
