@@ -28,7 +28,6 @@ public:
 
     BatteryMonitor(SERIAL_TYPE &_serial, bool debugEnabled);
 
-    // DynamicJsonDocument readBattery();
     bool readBatteryState(BatteryState &state);
 
     bool sendCommand(const byte cmd[], int cmdLen);
